@@ -74,16 +74,34 @@ class Codemaker
     def generate_code
         #generate random four digit code using numbers one to six.
         #Allow, or don't duplicates depending on user request.
+        code = Array.new(4)
+        code[0] = rand(1...7)
+
+        code[1] = rand(1...7)
+        code[2] = rand(1...7)
+        code[3] = rand(1...7)
+
+        #Need to restrict this for duplicate numbers, or not, depending on the users answer.
+        if duplicates == false
+        end
     end
 end
 
 #code breaker class
 class Codebreaker
     def initialize
-        @guesses = 
+        @guesses
     end
 
     def update_guesses
-
+        @guesses - 1
+        puts "You have #{@guesses} left."
     end
 end
+
+class Game
+
+end
+
+newCode = Codemaker.new
+newCode.generate_code
