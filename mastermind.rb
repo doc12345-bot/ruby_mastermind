@@ -73,13 +73,14 @@ end
 class Codemaker
     def generate_code
         #generate random four digit code using numbers one to six.
+        #Numbers represent colours.
         #Allow, or don't duplicates depending on user request.
-        code = Array.new(4)
+        code = Array.new(4) {rand(1...7)}
         code[0] = rand(1...7)
-
-        code[1] = rand(1...7)
-        code[2] = rand(1...7)
-        code[3] = rand(1...7)
+        if duplicates == false
+            for x in code[x] do
+            code[x] = rand(1...7)
+            if code[x]
 
         #Need to restrict this for duplicate numbers, or not, depending on the users answer.
         if duplicates == false
@@ -103,5 +104,55 @@ class Game
 
 end
 
+
+class Mastermind
+    COLORS = = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
+    MAX_GUESSES = 12
+    
+    def initialize
+        guesses = 0
+
+    end
+
+    def play
+    end
+
+    private
+    def generate_code
+        code = Array.new(4) {rand(1...7)}
+    end
+
+    def get_guess
+        puts "Try to break the code. Type your guess below:"
+        guess = gets.chomp
+        #convert to array?
+        guess += 1
+    end
+
+    def correct_guess?
+        guess == code
+    end
+
+    def give_feedback
+        feedback  = Array.new(4)
+        #Check for same colour
+        guess.each_with_index do |color, index|
+            if code[index] == color
+                feedback << "O"
+            elsif code.include?(color)
+                feedback << "0"
+            else
+                feedback << "X"
+            end
+        end
+        feedback
+        #Check for index
+        #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
+        #bubble sort the array to conceal 
+    end
+
+
+
+end
 newCode = Codemaker.new
 newCode.generate_code
