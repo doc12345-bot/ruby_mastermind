@@ -106,15 +106,38 @@ end
 
 
 class Mastermind
-    COLORS = = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
+    COLORS = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
     MAX_GUESSES = 12
+    CODE_LENGTH = 4
     
     def initialize
         guesses = 0
+        @secret_code = generate_code
 
     end
 
     def play
+        # Put some info about the game
+        puts "Welcome to Mastermind!"
+        puts "The code is #{CODE_LENGTH} colours long and you have #{MAX_GUESSES}."
+        puts "The code consists of these colours #{COLORS.merge}." 
+        puts "Enter the index of the colour from 0 to #{COLORS.length - 1}. Good luck!"
+        # while loop till guesses == max
+        while guesses != MAX_GUESSES
+            #guess = get_guess
+            guess = get_guess.map do |color_index_string|
+                color_index_string.to_i
+              end
+              
+            guesses += 1
+
+            # if guess is correct, congratulate
+            if correct_guess?
+                puts "Congratulations! Your guess was correct!"
+            else
+            # if not, feedback
+                guess.give_feedback
+            end
     end
 
     private
@@ -123,17 +146,21 @@ class Mastermind
     end
 
     def get_guess
-        puts "Try to break the code. Type your guess below:"
-        guess = gets.chomp
-        #convert to array?
-        guess += 1
+        puts "Try to break the code. Type your guess below (as a number):"
+        guess = gets.chomp.split
+        x = 0
+        #Converts numbers to corresponding colour
+        while x < CODE_LENGTH do
+            new_guess[x] = COLORS[guess[x]]
+            puts new_guess[x]
+        end
     end
 
-    def correct_guess?
+    def correct_guess?(guess)
         guess == code
     end
 
-    def give_feedback
+    def give_feedback(guess)
         feedback  = Array.new(4)
         #Check for same colour
         guess.each_with_index do |color, index|
@@ -148,7 +175,14 @@ class Mastermind
         feedback
         #Check for index
         #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
-        #bubble sort the array to conceal 
+    end
+
+    def bubble_sort(array)
+        #Generic bubble sort method, UNFINISHED
+        length = arrary.length
+        sorted = Array.new(4)
+
+
     end
 
 
