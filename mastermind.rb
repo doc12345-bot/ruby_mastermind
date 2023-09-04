@@ -119,7 +119,7 @@ class Mastermind
         puts "The code consists of these colours #{COLORS}." 
         puts "Enter the index of the colour from 0 to #{COLORS.length - 1}. Good luck!"
         # loop till guesses == max
-        while @guesses != MAX_GUESSES
+        while @guesses >= MAX_GUESSES
             #guess = get_guess
             guess = get_guess.map do |color_index_string|
                 color_index_string.to_i
@@ -154,7 +154,7 @@ class Mastermind
             guess = guess.chars.map(&:to_i)
             
             #Check input is valid (four digits, lower than 7)
-            if guess.length == 4 && guess.all? {|digit| 0..7.cover?(digit)}
+            if guess.length == 4 && guess.all? {|digit| digit.between?(0, 6)}
                 valid = true
             else
                 puts "Try again using only four digits lower than 7."
@@ -172,6 +172,7 @@ class Mastermind
         end
         puts "You said this: #{guess}"
         puts "which means this: #{new_guess}"
+        puts @guesses
         return new_guess
     end
 
