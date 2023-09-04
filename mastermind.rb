@@ -110,7 +110,6 @@ class Mastermind
     def initialize
         @guesses = 0
         @secret_code = generate_code
-
     end
 
     def play
@@ -146,14 +145,28 @@ class Mastermind
     end
 
     def get_guess
-        puts "Try to break the code. Type your guess below (as a number):"
-        guess = gets.chomp.split
-        
+        valid = false
+        while valid == false
+            puts "Try to break the code. Type your guess below (as a number):"
+            guess = gets.chomp
+
+            #Splits to four digit array, but still as string. Map iterates and converts.
+            guess = guess.chars.map(&:to_i)
+            
+            #Check input is valid (four digits, lower than 7)
+            if guess.length == 4 && guess.all? {|digit| 0..7.cover?(digit)}
+                valid = true
+            else
+                puts "Try again using only four digits lower than 7."
+            end
+        end
+
         x = 0
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
-            new_guess[x] = COLORS[guess[x].to_i]
+            puts "This is x: #{x}"
+            new_guess[x] = COLORS[guess[x]-1]
             puts new_guess[x]
             x += 1
         end
