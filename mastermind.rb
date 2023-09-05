@@ -119,19 +119,20 @@ class Mastermind
         puts "The code consists of these colours #{COLORS}." 
         puts "Enter the index of the colour from 0 to #{COLORS.length - 1}. Good luck!"
         # loop till guesses == max
-        while @guesses >= MAX_GUESSES
+        while @guesses <= MAX_GUESSES
             #guess = get_guess
-            guess = get_guess.map do |color_index_string|
-                color_index_string.to_i
-            end
+            guess = get_guess   
               
             @guesses += 1
+            puts "Guesses remaining #{MAX_GUESSES - @guesses}"
 
             # guess is correct? congratulate
+            #DOES NOT WORK
             if correct_guess?(guess)
                 puts "Congratulations! Your guess was correct!"
             else
             # not, feedback
+                puts "Sorry, not quite right. Here's a few pointers."
                 give_feedback(guess)
             end
         end
@@ -142,6 +143,8 @@ class Mastermind
     private
     def generate_code
         code = Array.new(4) {rand(1...7)}
+        puts code
+        puts code.class
     end
 
     def get_guess
@@ -152,6 +155,10 @@ class Mastermind
 
             #Splits to four digit array, but still as string. Map iterates and converts.
             guess = guess.chars.map(&:to_i)
+
+            guess.each_with_index do | element, index |
+                puts "This #{element} and this index: #{index}"
+            end
             
             #Check input is valid (four digits, lower than 7)
             if guess.length == 4 && guess.all? {|digit| digit.between?(0, 6)}
@@ -165,14 +172,9 @@ class Mastermind
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
-            puts "This is x: #{x}"
             new_guess[x] = COLORS[guess[x]-1]
-            puts new_guess[x]
             x += 1
         end
-        puts "You said this: #{guess}"
-        puts "which means this: #{new_guess}"
-        puts @guesses
         return new_guess
     end
 
@@ -180,19 +182,26 @@ class Mastermind
         guess == @secret_code
     end
 
+    #DOES NOT WORK
     def give_feedback(guess)
         feedback  = Array.new(4)
         #Check for same colour
         guess.each_with_index do |color, index|
-            if @secret_code[index] == color
+            if @secret_code[index] == guess[index]
                 feedback << "O"
-            elsif @secret_code.include?(color)
+            elsif @secret_code.include?(guess[index])
                 feedback << "0"
             else
                 feedback << "X"
             end
         end
-        feedback
+        #Needs to compare two four digit arrays. O for match, 0 for same digit but wrong place, X for incorrect. 
+        4.times do |i|
+            next unless @guess[i] == @secret_code[i]
+            feedback.push["O"]
+        end
+
+        puts feedback
         #Check for index
         #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
     end
