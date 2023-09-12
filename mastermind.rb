@@ -102,14 +102,63 @@ class Codebreaker
 end
 
 
-class Mastermind
+class MastermindLogic
+    
+    def initialize
+        @secret_code = generate_code
+    end
+
+    def generate_code
+        code = Array.new(4) {rand(1...7)}
+        puts code
+        puts code.class
+    end
+
+    def correct_guess?(guess)
+        guess == @secret_code
+    end
+
+    #DOES NOT WORK
+    def give_feedback(guess)
+        feedback  = Array.new(4)
+        puts @secret_code.class
+        #Check for same colour
+        guess.each_with_index do |color, index|
+            if @secret_code == guess[index]
+                feedback << "O"
+            elsif @secret_code.include?(guess[index])
+                feedback << "0"
+            else
+                feedback << "X"
+            end
+        end
+        #Needs to compare two four digit arrays. O for match, 0 for same digit but wrong place, X for incorrect. 
+        4.times do |i|
+            next unless @guess[i] == @secret_code[i]
+            feedback.push["O"]
+        end
+
+        puts feedback.join
+        #Check for index
+        #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
+    end
+
+    def bubble_sort(array)
+        #Generic bubble sort method, UNFINISHED
+        length = arrary.length
+        sorted = Array.new(4)
+    end
+end
+
+#I need to separate the I/O from the logic, eventually, which will go here. 
+class MastermindIO
     COLORS = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
     MAX_GUESSES = 12
     CODE_LENGTH = 4
-    
+
     def initialize
+        @game_logic = MastermindLogic.new
         @guesses = 0
-        @secret_code = generate_code
     end
 
     def play
@@ -128,23 +177,16 @@ class Mastermind
 
             # guess is correct? congratulate
             #DOES NOT WORK
-            if correct_guess?(guess)
+            if @game_logic.correct_guess?(guess)
                 puts "Congratulations! Your guess was correct!"
             else
             # not, feedback
                 puts "Sorry, not quite right. Here's a few pointers."
-                give_feedback(guess)
+                @game_logic.give_feedback(guess)
             end
         end
         puts "Sorry, you lost!"
         puts "This was the secret code #{@secret_code}"
-    end
-
-    private
-    def generate_code
-        code = Array.new(4) {rand(1...7)}
-        puts code
-        puts code.class
     end
 
     def get_guess
@@ -177,41 +219,8 @@ class Mastermind
         end
         return new_guess
     end
-
-    def correct_guess?(guess)
-        guess == @secret_code
-    end
-
-    #DOES NOT WORK
-    def give_feedback(guess)
-        feedback  = Array.new(4)
-        #Check for same colour
-        guess.each_with_index do |color, index|
-            if @secret_code[index] == guess[index]
-                feedback << "O"
-            elsif @secret_code.include?(guess[index])
-                feedback << "0"
-            else
-                feedback << "X"
-            end
-        end
-        #Needs to compare two four digit arrays. O for match, 0 for same digit but wrong place, X for incorrect. 
-        4.times do |i|
-            next unless @guess[i] == @secret_code[i]
-            feedback.push["O"]
-        end
-
-        puts feedback
-        #Check for index
-        #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
-    end
-
-    def bubble_sort(array)
-        #Generic bubble sort method, UNFINISHED
-        length = arrary.length
-        sorted = Array.new(4)
-    end
 end
 
-gameOne = Mastermind.new()
+
+gameOne = MastermindIO.new()
 gameOne.play
