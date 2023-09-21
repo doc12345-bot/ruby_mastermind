@@ -1,4 +1,5 @@
-gem install rspec
+
+require 'pry-byebug'
 
 #Board class
 class Board
@@ -108,21 +109,25 @@ class MastermindLogic
     
     def initialize
         @secret_code = generate_code
+        #binding.pry
     end
 
     def tell_secret
         puts @secret_code
         puts @secret_code.class
+        @secret_code
     end
 
     def generate_code
         code = Array.new(4) {rand(1...7)}
         puts code
         puts code.class
+        code
     end
 
     def correct_guess?(guess)
         guess == @secret_code
+        #binding.pry
     end
 
     #DOES NOT WORK
@@ -140,6 +145,7 @@ class MastermindLogic
                 feedback << "X"
             end
         end
+        #binding.pry
         #Needs to compare two four digit arrays. O for match, 0 for same digit but wrong place, X for incorrect. 
         #4.times do |i|
         #    next unless @guess[i] == @secret_code[i]
@@ -187,6 +193,8 @@ class MastermindIO
             #DOES NOT WORK
             if @game_logic.correct_guess?(guess)
                 puts "Congratulations! Your guess was correct!"
+                puts "You win!"
+                break
             else
             # not, feedback
                 puts "Sorry, not quite right. Here's a few pointers."
@@ -194,8 +202,9 @@ class MastermindIO
             end
         end
         puts "Sorry, you lost!"
-        puts "This was the secret code #{@secret_code}"
+        puts "This was the secret code #{@game_logic.tell_secret}"
     end
+
 
     def get_guess
         valid = false
@@ -217,7 +226,12 @@ class MastermindIO
                 puts "Try again using only four digits lower than 7."
             end
         end
+        puts "This is the guess: #{guess}"
+        guess
+    end
 
+    #Not currently in use, but should work
+    def convert_to_colour
         x = 0
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
@@ -226,7 +240,9 @@ class MastermindIO
             x += 1
         end
         return new_guess
+        puts "This is the new guess: #{new_guess}"
     end
+
 end
 
 
