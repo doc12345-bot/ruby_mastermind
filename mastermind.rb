@@ -109,25 +109,19 @@ class MastermindLogic
     
     def initialize
         @secret_code = generate_code
-        #binding.pry
     end
 
     def tell_secret
-        puts @secret_code
-        puts @secret_code.class
         @secret_code
     end
 
     def generate_code
         code = Array.new(4) {rand(1...7)}
-        puts code
-        puts code.class
         code
     end
 
     def correct_guess?(guess)
         guess == @secret_code
-        #binding.pry
     end
 
     #DOES NOT WORK
@@ -136,9 +130,11 @@ class MastermindLogic
         puts @secret_code.to_a.class
         puts @secret_code
         #Check for same colour
+        #Needs to compare two four digit arrays. 
+        # # for match, 0 for same digit but wrong place, X for incorrect. 
         guess.each_with_index do |color, index|
-            if @secret_code == guess[index]
-                feedback << "O"
+            if @secret_code.to_a[index] == guess[index]
+                feedback << "#"
             elsif @secret_code.to_a.include?(guess[index])
                 feedback << "0"
             else
@@ -146,7 +142,6 @@ class MastermindLogic
             end
         end
         #binding.pry
-        #Needs to compare two four digit arrays. O for match, 0 for same digit but wrong place, X for incorrect. 
         #4.times do |i|
         #    next unless @guess[i] == @secret_code[i]
         #    feedback.push["O"]
@@ -201,7 +196,6 @@ class MastermindIO
                 @game_logic.give_feedback(guess)
             end
         end
-        puts "Sorry, you lost!"
         puts "This was the secret code #{@game_logic.tell_secret}"
     end
 
