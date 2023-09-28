@@ -124,7 +124,7 @@ class MastermindLogic
         guess == @secret_code
     end
 
-    #DOES NOT WORK
+    #Working, but not smooth
     def give_feedback(guess)
         feedback = Array.new(4)
         puts @secret_code.to_a.class
@@ -146,16 +146,29 @@ class MastermindLogic
         #    next unless @guess[i] == @secret_code[i]
         #    feedback.push["O"]
         #end
-
+        puts "sorted: " + bubble_sort(feedback.join)
         puts feedback.join
-        #Check for index
-        #Return answer in an array, O for correct guess and place, 0 for colour but wrong place and X for nothing.
     end
 
     def bubble_sort(array)
-        #Generic bubble sort method, UNFINISHED
-        length = arrary.length
-        sorted = Array.new(4)
+        #Generic bubble sort method
+        length = array.length
+        sorted = Array.new(length)
+
+        loop do
+            swapped = false
+
+            #Goes over the array, pushing the higher numbers up the chain
+            (length-1).times do |i|
+                if array[i] > array[i+1]
+                    array[i], array[i+1] = array[i+1], array[i]
+                    swapped = true
+                end
+            end
+
+            break if not swapped
+        end
+        array
     end
 end
 
@@ -196,7 +209,7 @@ class MastermindIO
                 @game_logic.give_feedback(guess)
             end
         end
-        puts "This was the secret code #{@game_logic.tell_secret}"
+        puts "This was the secret code #{@game_logic.tell_secret.convert_to_colour}"
     end
 
 
@@ -224,8 +237,8 @@ class MastermindIO
         guess
     end
 
-    #Not currently in use, but should work
-    def convert_to_colour
+    #Not working
+    def convert_to_colour(array)
         x = 0
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
