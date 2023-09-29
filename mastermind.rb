@@ -124,28 +124,33 @@ class MastermindLogic
         guess == @secret_code
     end
 
-    #Working, but not smooth
+    #Working, but not smooth, may have to separate feedback function to distinguish duplicates
     def give_feedback(guess)
         feedback = Array.new(4)
+
         puts @secret_code.to_a.class
-        puts @secret_code
-        #Check for same colour
+        puts "This is the secret: #{@secret_code}"
+
+
+        #Check for same digit
         #Needs to compare two four digit arrays. 
         # # for match, 0 for same digit but wrong place, X for incorrect. 
+
+        ##PROBLEM###
+        #When guess has duplicates the feedback gives too many 0's.
+        #e.g. Code = 1234
+        #guess = 1111
+        #Feedback = #000
         guess.each_with_index do |color, index|
             if @secret_code.to_a[index] == guess[index]
                 feedback << "#"
             elsif @secret_code.to_a.include?(guess[index])
                 feedback << "0"
             else
-                feedback << "X"
+                feedback << "_"
             end
         end
-        #binding.pry
-        #4.times do |i|
-        #    next unless @guess[i] == @secret_code[i]
-        #    feedback.push["O"]
-        #end
+
         puts "sorted: " + bubble_sort(feedback.join)
         puts feedback.join
     end
@@ -186,9 +191,10 @@ class MastermindIO
     def play
         # Put some info about the game
         puts "Welcome to Mastermind!"
-        puts "The code is #{CODE_LENGTH} colours long and you have #{MAX_GUESSES}."
+        puts "The code is #{CODE_LENGTH} colours long and you have #{MAX_GUESSES} guesses."
         puts "The code consists of these colours #{COLORS}." 
-        puts "Enter the index of the colour from 0 to #{COLORS.length - 1}. Good luck!"
+        puts "Enter the index of the colour from 1 to #{COLORS.length}. Good luck!"
+        
         # loop till guesses == max
         while @guesses <= MAX_GUESSES
             #guess = get_guess
@@ -198,7 +204,6 @@ class MastermindIO
             puts "Guesses remaining #{MAX_GUESSES - @guesses}"
 
             # guess is correct? congratulate
-            #DOES NOT WORK
             if @game_logic.correct_guess?(guess)
                 puts "Congratulations! Your guess was correct!"
                 puts "You win!"
@@ -206,12 +211,12 @@ class MastermindIO
             else
             # not, feedback
                 puts "Sorry, not quite right. Here's a few pointers."
+                puts @game_logic.tell_secret
                 @game_logic.give_feedback(guess)
             end
         end
-        puts "This was the secret code #{@game_logic.tell_secret.convert_to_colour}"
+        puts "This was the secret code #{convert_to_colour(@game_logic.tell_secret)}"
     end
-
 
     def get_guess
         valid = false
@@ -233,21 +238,19 @@ class MastermindIO
                 puts "Try again using only four digits lower than 7."
             end
         end
-        puts "This is the guess: #{guess}"
+        puts "This is the guess: #{convert_to_colour(guess.to_a)}"
         guess
     end
 
-    #Not working
     def convert_to_colour(array)
         x = 0
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
-            new_guess[x] = COLORS[guess[x]-1]
+            new_guess[x] = COLORS[array[x]-1]
             x += 1
         end
         return new_guess
-        puts "This is the new guess: #{new_guess}"
     end
 
 end
