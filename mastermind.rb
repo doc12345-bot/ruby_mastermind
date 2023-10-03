@@ -124,35 +124,39 @@ class MastermindLogic
         guess == @secret_code
     end
 
-    #Working, but not smooth, may have to separate feedback function to distinguish duplicates
-    def give_feedback(guess)
-        feedback = Array.new(4)
 
-        puts @secret_code.to_a.class
+    #This works how I intended, but there is an error.
+    #I need to separate the feedback process. 
+    #First match the code with the index.
+    #Then match for any in the wrong position.
+    #ATM, this is what happens. E.g. Code = 3451, guess = 3111
+    #Feedback = #0__ Should be ##__
+    def give_feedback(guess)
+        feedback = Array.new(0)
+
+        #puts @secret_code.to_a.class
         puts "This is the secret: #{@secret_code}"
 
+        clone_code = @secret_code.to_a.map(&:clone)
 
-        #Check for same digit
-        #Needs to compare two four digit arrays. 
+        #Compares a clone of the secret code with the guess and, if there is a match, alters the 
+        #clone. 
         # # for match, 0 for same digit but wrong place, X for incorrect. 
-
-        ##PROBLEM###
-        #When guess has duplicates the feedback gives too many 0's.
-        #e.g. Code = 1234
-        #guess = 1111
-        #Feedback = #000
         guess.each_with_index do |color, index|
-            if @secret_code.to_a[index] == guess[index]
+            if clone_code[index] == guess[index]
                 feedback << "#"
-            elsif @secret_code.to_a.include?(guess[index])
+                clone_code[index] = nil            
+            elsif clone_code.include?(guess[index])
                 feedback << "0"
+                position = clone_code.index(guess[index])
+                clone_code[position] = nil
             else
                 feedback << "_"
             end
         end
 
-        puts "sorted: " + bubble_sort(feedback.join)
-        puts feedback.join
+        feedback = bubble_sort(feedback.join)
+        puts feedback
     end
 
     def bubble_sort(array)
@@ -211,6 +215,10 @@ class MastermindIO
             else
             # not, feedback
                 puts "Sorry, not quite right. Here's a few pointers."
+                puts "The # means your guess was correct and in the right position."
+                puts "The 0 means the colour was correct but in the wrong position."
+                puts "The _ means your guess was incorrect."
+                puts "This feedback has been reordered."
                 puts @game_logic.tell_secret
                 @game_logic.give_feedback(guess)
             end
