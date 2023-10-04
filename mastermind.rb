@@ -159,6 +159,27 @@ class MastermindLogic
         puts feedback
     end
 
+    #Checks to see if the code and guess have any exact matches.
+    def exact_match(code, guess)
+        matches = 0
+
+        code.each_with_index do |colour, index|
+            next unless item == guess[index]
+
+            matches +=1
+            code[index] = nil
+            guess[index] = nil
+        end
+        #Returns number of matches
+        matches
+
+    end
+
+    #Checks to see the secret code contains the guess.
+    def wrong_place(code, guess)
+
+    end
+
     def bubble_sort(array)
         #Generic bubble sort method
         length = array.length
