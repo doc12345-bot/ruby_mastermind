@@ -139,17 +139,26 @@ class MastermindLogic
 
         clone_code = @secret_code.to_a.map(&:clone)
 
+        #Still has same problem.
+        exact = exact_match(clone_code, guess)
+        nearly = wrong_place(clone_code, guess)
+        puts "Matches #{exact}"
+        puts "Near misses #{nearly}"
+
         #Compares a clone of the secret code with the guess and, if there is a match, alters the 
         #clone. 
+        #Still not working
         # # for match, 0 for same digit but wrong place, X for incorrect. 
         guess.each_with_index do |color, index|
             if clone_code[index] == guess[index]
                 feedback << "#"
-                clone_code[index] = nil            
+                clone_code[index] = nil  
+                #pry.byebug          
             elsif clone_code.include?(guess[index])
                 feedback << "0"
-                position = clone_code.index(guess[index])
+                position = clone_code.find_index(guess[index])
                 clone_code[position] = nil
+                #pry.byebug
             else
                 feedback << "_"
             end
@@ -164,7 +173,7 @@ class MastermindLogic
         matches = 0
 
         code.each_with_index do |colour, index|
-            next unless item == guess[index]
+            next unless colour == guess[index]
 
             matches +=1
             code[index] = nil
@@ -177,7 +186,21 @@ class MastermindLogic
 
     #Checks to see the secret code contains the guess.
     def wrong_place(code, guess)
+        matches = 0
+        clone_code = @secret_code.to_a.map(&:clone)
 
+        guess.each_index do |index|
+            #Skips unless code includes guess and they are not at the same index.
+            next unless clone_code.include?(guess[index]) && clone_code[index] != guess[index]
+
+            matches +=1
+
+            #Finds the index of matching number then removes.
+            found = clone_code.find_index(guess[index])
+            clone_code[found] = nil
+            guess[index] = nil
+        end
+        matches
     end
 
     def bubble_sort(array)
