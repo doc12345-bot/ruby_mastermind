@@ -117,6 +117,7 @@ class MastermindLogic
 
     def generate_code
         code = Array.new(4) {rand(1...7)}
+        #code = Array.new(3, 4, 5, 1)
         code
     end
 
@@ -124,13 +125,6 @@ class MastermindLogic
         guess == @secret_code
     end
 
-
-    #This works how I intended, but there is an error.
-    #I need to separate the feedback process. 
-    #First match the code with the index.
-    #Then match for any in the wrong position.
-    #ATM, this is what happens. E.g. Code = 3451, guess = 3111
-    #Feedback = #0__ Should be ##__
     def give_feedback(guess)
         feedback = Array.new(0)
 
@@ -139,33 +133,32 @@ class MastermindLogic
 
         clone_code = @secret_code.to_a.map(&:clone)
 
-        #Still has same problem.
-        exact = exact_match(clone_code, guess)
-        nearly = wrong_place(clone_code, guess)
-        puts "Matches #{exact}"
-        puts "Near misses #{nearly}"
+        #Separate comparison will give accurate feedback.
+        # This was the feedback can just give any positives, without worrying about mistakes.
+        #These just give the number of matches and exact guesses, but I don't know how to convert to feedback
+        
+        #exact = exact_match(clone_code, guess)
+        #nearly = wrong_place(clone_code, guess)
+        #puts "Matches #{exact}"
+        #puts "Near misses #{nearly}"
 
         #Compares a clone of the secret code with the guess and, if there is a match, alters the 
         #clone. 
-        #Still not working
-        # # for match, 0 for same digit but wrong place, X for incorrect. 
         guess.each_with_index do |color, index|
-            if clone_code[index] == guess[index]
-                feedback << "#"
-                clone_code[index] = nil  
-                #pry.byebug          
-            elsif clone_code.include?(guess[index])
+            if clone_code.include?(guess[index]) && clone_code[index] != guess[index]
                 feedback << "0"
                 position = clone_code.find_index(guess[index])
                 clone_code[position] = nil
-                #pry.byebug
-            else
+            elsif clone_code[index] == guess[index]
+                feedback << "#"
+                clone_code[index] = nil  
+           else
                 feedback << "_"
             end
         end
 
-        feedback = bubble_sort(feedback.join)
-        puts feedback
+        #feedback = bubble_sort(feedback.join)
+        puts feedback.join
     end
 
     #Checks to see if the code and guess have any exact matches.
@@ -176,12 +169,11 @@ class MastermindLogic
             next unless colour == guess[index]
 
             matches +=1
-            code[index] = nil
-            guess[index] = nil
+            code[index] = "#"
+            guess[index] = "#"
         end
         #Returns number of matches
         matches
-
     end
 
     #Checks to see the secret code contains the guess.
@@ -191,14 +183,14 @@ class MastermindLogic
 
         guess.each_index do |index|
             #Skips unless code includes guess and they are not at the same index.
-            next unless clone_code.include?(guess[index]) && clone_code[index] != guess[index]
+            next unless guess[index] != "#" && clone_code.include?(guess[index]) && clone_code[index] != guess[index]
 
             matches +=1
 
             #Finds the index of matching number then removes.
             found = clone_code.find_index(guess[index])
-            clone_code[found] = nil
-            guess[index] = nil
+            clone_code[found] = "0"
+            guess[index] = "0"
         end
         matches
     end
@@ -242,6 +234,7 @@ class MastermindIO
         puts "The code is #{CODE_LENGTH} colours long and you have #{MAX_GUESSES} guesses."
         puts "The code consists of these colours #{COLORS}." 
         puts "Enter the index of the colour from 1 to #{COLORS.length}. Good luck!"
+        puts ""
         
         # loop till guesses == max
         while @guesses <= MAX_GUESSES
@@ -255,14 +248,17 @@ class MastermindIO
             if @game_logic.correct_guess?(guess)
                 puts "Congratulations! Your guess was correct!"
                 puts "You win!"
+                puts ""
                 break
             else
             # not, feedback
                 puts "Sorry, not quite right. Here's a few pointers."
+                puts ""
                 puts "The # means your guess was correct and in the right position."
                 puts "The 0 means the colour was correct but in the wrong position."
                 puts "The _ means your guess was incorrect."
                 puts "This feedback has been reordered."
+                puts ""
                 puts @game_logic.tell_secret
                 @game_logic.give_feedback(guess)
             end
