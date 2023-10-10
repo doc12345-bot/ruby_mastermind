@@ -117,7 +117,6 @@ class MastermindLogic
 
     def generate_code
         code = Array.new(4) {rand(1...7)}
-        #code = Array.new(3, 4, 5, 1)
         code
     end
 
@@ -128,36 +127,41 @@ class MastermindLogic
     def give_feedback(guess)
         feedback = Array.new(0)
 
-        #puts @secret_code.to_a.class
         puts "This is the secret: #{@secret_code}"
 
         clone_code = @secret_code.to_a.map(&:clone)
 
-        #Separate comparison will give accurate feedback.
-        # This was the feedback can just give any positives, without worrying about mistakes.
-        #These just give the number of matches and exact guesses, but I don't know how to convert to feedback
-        
-        #exact = exact_match(clone_code, guess)
-        #nearly = wrong_place(clone_code, guess)
+        exact = exact_match(clone_code, guess)
+        nearly = wrong_place(clone_code, guess)
         #puts "Matches #{exact}"
         #puts "Near misses #{nearly}"
 
-        #Compares a clone of the secret code with the guess and, if there is a match, alters the 
-        #clone. 
-        guess.each_with_index do |color, index|
-            if clone_code.include?(guess[index]) && clone_code[index] != guess[index]
-                feedback << "0"
-                position = clone_code.find_index(guess[index])
-                clone_code[position] = nil
-            elsif clone_code[index] == guess[index]
-                feedback << "#"
-                clone_code[index] = nil  
-           else
-                feedback << "_"
-            end
+        exact.times do
+            feedback << "#"
         end
 
+        nearly.times do
+            feedback << "0"
+        end
+
+        #Compares a clone of the secret code with the guess and, if there is a match, alters the 
+        #clone. 
+        #guess.each_with_index do |color, index|
+        #    if clone_code.include?(guess[index]) && clone_code[index] != guess[index]
+        #        feedback << "0"
+        #        position = clone_code.find_index(guess[index])
+        #        clone_code[position] = nil
+        #    elsif clone_code[index] == guess[index]
+        #        puts "This is the code at index #{index} here: #{clone_code[index]}"
+        #        puts "This is the guess at index #{index} here: #{guess[index]}"
+        #        feedback << "#"
+        #        clone_code[index] = nil  
+        #   else
+        #        feedback << "_"
+        #    end
+        #end
         #feedback = bubble_sort(feedback.join)
+
         puts feedback.join
     end
 
@@ -172,29 +176,29 @@ class MastermindLogic
             code[index] = "#"
             guess[index] = "#"
         end
-        #Returns number of matches
+        #Returns int
         matches
     end
 
     #Checks to see the secret code contains the guess.
     def wrong_place(code, guess)
         matches = 0
-        clone_code = @secret_code.to_a.map(&:clone)
 
         guess.each_index do |index|
             #Skips unless code includes guess and they are not at the same index.
-            next unless guess[index] != "#" && clone_code.include?(guess[index]) && clone_code[index] != guess[index]
+            next unless guess[index] != "#" && code.include?(guess[index]) && code[index] != guess[index]
 
             matches +=1
 
             #Finds the index of matching number then removes.
-            found = clone_code.find_index(guess[index])
-            clone_code[found] = "0"
+            found = code.find_index(guess[index])
+            code[found] = "0"
             guess[index] = "0"
         end
         matches
     end
 
+    #Defunct now that feedback method is fixed
     def bubble_sort(array)
         #Generic bubble sort method
         length = array.length
@@ -217,7 +221,7 @@ class MastermindLogic
     end
 end
 
-#I need to separate the I/O from the logic, eventually, which will go here. 
+#Separate the I/O from the logic, eventually, which will go here. 
 class MastermindIO
     COLORS = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
     MAX_GUESSES = 12
@@ -256,8 +260,7 @@ class MastermindIO
                 puts ""
                 puts "The # means your guess was correct and in the right position."
                 puts "The 0 means the colour was correct but in the wrong position."
-                puts "The _ means your guess was incorrect."
-                puts "This feedback has been reordered."
+                puts "This feedback does not represent the order of your guess."
                 puts ""
                 puts @game_logic.tell_secret
                 @game_logic.give_feedback(guess)
