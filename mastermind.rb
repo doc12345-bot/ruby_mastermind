@@ -1,5 +1,6 @@
 
 require 'pry-byebug'
+require 'colorize'
 
 #Board class
 class Board
@@ -290,9 +291,34 @@ class MastermindIO
             end
         end
         puts "This is the guess: #{convert_to_colour(guess.to_a)}"
+        puts "This is the guess, colorized: #{background(guess.to_a)}"
         guess
     end
 
+    #Colours the background of each string.
+    def background(array)
+        #"red", "green", "blue", "yellow", "purple", "orange"
+        new_guess = Array.new(4)
+        #Converts numbers to corresponding colour
+        for x in array do
+            if x == 1
+                new_guess[x] = x.to_s.white.on_red
+            elsif x == 2
+                new_guess[x] = x.to_s.white.on_green
+            elsif x == 3
+                new_guess[x] = x.to_s.white.on_blue
+            elsif x == 4
+                new_guess[x] = x.to_s.white.on_yellow
+            elsif x == 5
+                new_guess[x] = x.to_s.white.on_purple
+            elsif x == 6
+                new_guess[x] = x.to_s.white.on_orange
+            end
+        end
+        return new_guess
+    end
+
+    #Converts to word from COLORS
     def convert_to_colour(array)
         x = 0
         new_guess = Array.new(4)
@@ -305,6 +331,8 @@ class MastermindIO
     end
 
 end
+
+puts " Testing ".white.on_red
 
 
 gameOne = MastermindIO.new()
