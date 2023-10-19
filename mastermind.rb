@@ -226,12 +226,12 @@ end
 class MastermindIO
     #COLORS = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
     COLORS = {
-        1 => :white_on_red,
-        2 => :white_on_green,
-        3 => :white_on_blue,
-        4 => :white_on_yellow,
-        5 => :white_on_purple,
-        6 => :white_on_orange
+        1 => :red,
+        2 => :green,
+        3 => :blue,
+        4 => :yellow,
+        5 => :purple,
+        6 => :orange
       }.freeze
       
     MAX_GUESSES = 12
@@ -308,10 +308,13 @@ class MastermindIO
 
     def background(array)
         new_guess = Array.new(4)
+        
         array.each_with_index do |x, index|
-          new_guess[index] = x.colorize(COLORS[x])
+            #binding.pry
+          new_guess[index] = x.to_s.colorize(:background => COLORS[x])
+          #binding.pry
         end
-        new_guess
+        new_guess.join
       end
       
 
@@ -321,7 +324,7 @@ class MastermindIO
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
-            new_guess[x] = COLORS[array[x]-1]
+            new_guess[x] = COLORS[array[x]]
             x += 1
         end
         return new_guess
