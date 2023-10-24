@@ -224,17 +224,19 @@ end
 
 #Separate the I/O from the logic, eventually, which will go here. 
 class MastermindIO
-    #COLORS = ["red", "green", "blue", "yellow", "purple", "orange"].freeze
+    COLORS_STRING = ["red", "green", "blue", "yellow", "cyan", "magenta"].freeze
     COLORS = {
         1 => :red,
         2 => :green,
         3 => :blue,
         4 => :yellow,
-        5 => :purple,
-        6 => :orange
+        5 => :cyan,
+        6 => :magenta,
+        "#" => :grey,
+        "0" => :light_white
       }.freeze
       
-    MAX_GUESSES = 12
+    MAX_GUESSES = 2
     CODE_LENGTH = 4
 
     def initialize
@@ -251,7 +253,7 @@ class MastermindIO
         puts ""
         
         # loop till guesses == max
-        while @guesses <= MAX_GUESSES
+        while @guesses < MAX_GUESSES
             #guess = get_guess
             guess = get_guess   
               
@@ -272,7 +274,7 @@ class MastermindIO
                 puts "The 0 means the colour was correct but in the wrong position."
                 puts "This feedback does not represent the order of your guess."
                 puts ""
-                puts @game_logic.tell_secret
+                #puts @game_logic.tell_secret
                 @game_logic.give_feedback(guess)
             end
         end
@@ -293,7 +295,7 @@ class MastermindIO
             end
             
             #Check input is valid (four digits, lower than 7)
-            if guess.length == 4 && guess.all? {|digit| digit.between?(0, 6)}
+            if guess.length == 4 && guess.all? {|digit| digit.between?(1, 6)}
                 valid = true
             else
                 puts "Try again using only four digits lower than 7."
@@ -308,11 +310,8 @@ class MastermindIO
 
     def background(array)
         new_guess = Array.new(4)
-        
         array.each_with_index do |x, index|
-            #binding.pry
           new_guess[index] = x.to_s.colorize(:background => COLORS[x])
-          #binding.pry
         end
         new_guess.join
       end
@@ -324,7 +323,7 @@ class MastermindIO
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
-            new_guess[x] = COLORS[array[x]]
+            new_guess[x] = COLORS_STRING[array[x]-1]
             x += 1
         end
         return new_guess
@@ -332,9 +331,9 @@ class MastermindIO
 
 end
 
-puts " Testing ".white.on_red
+#puts " Testing ".white.on_red
 
-puts " Testing ".colorize(:background => :red)
+#puts " Testing ".colorize(:background => :light_white)
 
 
 gameOne = MastermindIO.new()
