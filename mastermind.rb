@@ -248,8 +248,8 @@ class MastermindIO
         # Put some info about the game
         puts "Welcome to Mastermind!"
         puts "The code is #{CODE_LENGTH} colours long and you have #{MAX_GUESSES} guesses."
-        puts "The code consists of these colours #{COLORS}." 
-        puts "Enter the index of the colour from 1 to #{COLORS.length}. Good luck!"
+        puts "The code consists of these colours #{COLORS_STRING}." 
+        puts "Enter the index of the colour from 1 to #{COLORS_STRING.length}. Good luck!"
         puts ""
         
         # loop till guesses == max
@@ -258,7 +258,6 @@ class MastermindIO
             guess = get_guess   
               
             @guesses += 1
-            puts "Guesses remaining #{MAX_GUESSES - @guesses}"
 
             # guess is correct? congratulate
             if @game_logic.correct_guess?(guess)
@@ -275,10 +274,18 @@ class MastermindIO
                 puts "This feedback does not represent the order of your guess."
                 puts ""
                 #puts @game_logic.tell_secret
+
+                puts "Guesses remaining #{MAX_GUESSES - @guesses}"
+
                 @game_logic.give_feedback(guess)
             end
         end
-        puts "This was the secret code #{convert_to_colour(@game_logic.tell_secret)}"
+        code_in_colour = other_background(convert_to_colour(@game_logic.tell_secret))
+        puts code_in_colour.class
+        puts "This was the secret code: #{code_in_colour}."
+        puts "This was the secret code: #{convert_to_colour(@game_logic.tell_secret).join(" ")}."
+        puts " "
+        puts "Thank you for playing!"
     end
 
     def get_guess
@@ -301,22 +308,31 @@ class MastermindIO
                 puts "Try again using only four digits lower than 7."
             end
         end
-        puts "This is the guess: #{convert_to_colour(guess)}"
+        string_colour_guess = convert_to_colour(guess)
+        puts "This is the guess, colorized: #{other_background(string_colour_guess)}"
         puts "This is the guess, colorized: #{background(guess)}"
         guess
     end
 
-    #Colours the background of each string.
-
+    #Colours the background of each number
     def background(array)
         new_guess = Array.new(4)
         array.each_with_index do |x, index|
           new_guess[index] = x.to_s.colorize(:background => COLORS[x])
         end
         new_guess.join
-      end
-      
+    end
 
+    #This converts strings into the appropriate coloured background
+    #Not quite working
+    def other_background(array)
+        new_guess = Array.new(4)
+        array.each_with_index do |x, index|
+          new_guess[index] = x.to_s.colorize(:background => COLORS[index+1])
+        end
+        new_guess.join
+    end
+      
     #Converts to word from COLORS
     def convert_to_colour(array)
         x = 0
