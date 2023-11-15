@@ -2,110 +2,6 @@
 require 'pry-byebug'
 require 'colorize'
 
-#Board class
-class Board
-    def initialize
-        @board
-        @guesses
-        @duplicates
-    end
-
-    #Create board
-    #prompt for number of guesses
-    def number_of_guesses
-        puts "Welcome! How many guesses do you want to have? It must be an even number."
-        @guesses = gets.chomp
-        #Check if number is even and is a number
-    
-        #prompt for allowance of duplicates
-        puts "Do you want to allow for duplicate colours? Please type yes or no."
-        duplicate = gets.chomp
-        while duplicate != "yes" || "no"
-            puts "Please type yes or no if you want duplicates."
-            duplicate == gets.chomp 
-        end
-    
-        if duplicate == "yes"
-            @duplicates = true
-        elsif duplicate == "no"
-            @duplicates = false
-        end
-
-    end
-
-    #display board
-    def rule_display 
-        puts "How to play Mastermind:"
-        puts "/n"
-        puts "This is a single player game again the computer."
-        puts "You, the player, must break the computers code."
-        puts "There are six different number combinations:"
-        puts "/n"
-        puts "1 2 3 4 5 6" 
-        puts "/n"
-        puts "The computer will create a sequence of four, the master code. For example:"
-        puts "/n"
-        puts "3215"
-        puts "/n"
-        puts "If you have chosen to allow duplicates, then the code may contain them."
-        puts "You will have the same number of guesses that you entered earlier."
-        puts "/n"
-        puts "Clues:"
-        puts "After each guess, there will be clues to help you break the code."
-        puts "/n"
-        puts "O This means one of your guesses was correct AND in the correct place."
-        puts "+ This means that one of your guesses was correct but in the wrong position."
-        puts "If there are no clues, your guess was incorrect."
-        puts "/n"
-        puts "Example:"
-        puts "Using the above master code, this guess would receive these clues:"
-        puts "/n"
-        puts "1234  O++"
-        puts "/n"
-        puts "The guess had one correct number in the correct location and two correct numbers in the wrong location."
-        puts "/n"
-        puts "Ok, lets play!"
-    end
-
-    #countdown of turns
-
-    #compare guess to code
-        #give feedback
-end
-
-#code maker class
-class Codemaker
-    def generate_code
-        #generate random four digit code using numbers one to six.
-        #Numbers represent colours.
-        #Allow, or don't duplicates depending on user request.
-        code = Array.new(4) {rand(1...7)}
-        code[0] = rand(1...7)
-        if duplicates == false
-            for x in code[x] do
-            code[x] = rand(1...7)
-            end
-        end
-
-        #Need to restrict this for duplicate numbers, or not, depending on the users answer.
-        if duplicates == false
-        end
-    end
-end
-
-#code breaker class
-class Codebreaker
-    def initialize
-        @guesses
-    end
-
-    def update_guesses
-        @guesses - 1
-        puts "You have #{@guesses} left."
-    end
-end
-
-
 class MastermindLogic
     
     def initialize
@@ -128,14 +24,12 @@ class MastermindLogic
     def give_feedback(guess)
         feedback = Array.new(0)
 
-        puts "This is the secret: #{@secret_code}"
+        #puts "This is the secret: #{@secret_code}"
 
         clone_code = @secret_code.to_a.map(&:clone)
 
         exact = exact_match(clone_code, guess)
         nearly = wrong_place(clone_code, guess)
-        #puts "Matches #{exact}"
-        #puts "Near misses #{nearly}"
 
         exact.times do
             feedback << "#"
@@ -144,24 +38,6 @@ class MastermindLogic
         nearly.times do
             feedback << "0"
         end
-
-        #Compares a clone of the secret code with the guess and, if there is a match, alters the 
-        #clone. 
-        #guess.each_with_index do |color, index|
-        #    if clone_code.include?(guess[index]) && clone_code[index] != guess[index]
-        #        feedback << "0"
-        #        position = clone_code.find_index(guess[index])
-        #        clone_code[position] = nil
-        #    elsif clone_code[index] == guess[index]
-        #        puts "This is the code at index #{index} here: #{clone_code[index]}"
-        #        puts "This is the guess at index #{index} here: #{guess[index]}"
-        #        feedback << "#"
-        #        clone_code[index] = nil  
-        #   else
-        #        feedback << "_"
-        #    end
-        #end
-        #feedback = bubble_sort(feedback.join)
 
         puts feedback.join
     end
@@ -221,8 +97,7 @@ class MastermindLogic
         array
     end
 end
-
-#Separate the I/O from the logic, eventually, which will go here. 
+ 
 class MastermindIO
     COLORS_STRING = ["red", "green", "blue", "yellow", "cyan", "magenta"].freeze
     COLORS = {
@@ -236,7 +111,7 @@ class MastermindIO
         "0" => :light_white
       }.freeze
       
-    MAX_GUESSES = 2
+    MAX_GUESSES = 12
     CODE_LENGTH = 4
 
     def initialize
@@ -258,6 +133,9 @@ class MastermindIO
             guess = get_guess   
               
             @guesses += 1
+            if @guesses == MAX_GUESSES
+                break
+            end
 
             # guess is correct? congratulate
             if @game_logic.correct_guess?(guess)
@@ -280,10 +158,10 @@ class MastermindIO
                 @game_logic.give_feedback(guess)
             end
         end
-        code_in_colour = other_background(convert_to_colour(@game_logic.tell_secret))
-        puts code_in_colour.class
+        code_in_colour = string_background(convert_to_colour_string(@game_logic.tell_secret))
+        #puts code_in_colour.class
+        puts "This was the secret code: #{int_background(@game_logic.tell_secret)}."
         puts "This was the secret code: #{code_in_colour}."
-        puts "This was the secret code: #{convert_to_colour(@game_logic.tell_secret).join(" ")}."
         puts " "
         puts "Thank you for playing!"
     end
@@ -297,10 +175,6 @@ class MastermindIO
             #Splits to four digit array, but still as string. Map iterates and converts.
             guess = guess.chars.map(&:to_i)
 
-            guess.each_with_index do | element, index |
-                #puts "This #{element} and this index: #{index}"
-            end
-            
             #Check input is valid (four digits, lower than 7)
             if guess.length == 4 && guess.all? {|digit| digit.between?(1, 6)}
                 valid = true
@@ -308,14 +182,14 @@ class MastermindIO
                 puts "Try again using only four digits lower than 7."
             end
         end
-        string_colour_guess = convert_to_colour(guess)
-        puts "This is the guess, colorized: #{other_background(string_colour_guess)}"
-        puts "This is the guess, colorized: #{background(guess)}"
+        string_colour_guess = convert_to_colour_string(guess)
+        puts "This is the guess, colorized: #{int_background(guess)}"
+        puts "And in English: #{string_background(string_colour_guess)}"
         guess
     end
 
     #Colours the background of each number
-    def background(array)
+    def int_background(array)
         new_guess = Array.new(4)
         array.each_with_index do |x, index|
           new_guess[index] = x.to_s.colorize(:background => COLORS[x])
@@ -324,21 +198,22 @@ class MastermindIO
     end
 
     #This converts strings into the appropriate coloured background
-    #Not quite working
-    def other_background(array)
+    def string_background(array)
         new_guess = Array.new(4)
         array.each_with_index do |x, index|
-          new_guess[index] = x.to_s.colorize(:background => COLORS[index+1])
+            #background_color = x.to_sym
+            new_guess[index] = x.colorize(:background => x.to_sym)
         end
         new_guess.join
     end
       
     #Converts to word from COLORS
-    def convert_to_colour(array)
+    def convert_to_colour_string(array)
         x = 0
         new_guess = Array.new(4)
         #Converts numbers to corresponding colour
         while x < CODE_LENGTH do
+            #puts "This is x: #{x}"
             new_guess[x] = COLORS_STRING[array[x]-1]
             x += 1
         end
@@ -346,11 +221,6 @@ class MastermindIO
     end
 
 end
-
-#puts " Testing ".white.on_red
-
-#puts " Testing ".colorize(:background => :light_white)
-
 
 gameOne = MastermindIO.new()
 gameOne.play
