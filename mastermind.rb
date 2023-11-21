@@ -14,7 +14,7 @@ class MastermindLogic
   end
 
   def generate_code
-    code = Array.new(4) { rand(1...7) }
+    Array.new(4) { rand(1...7) }
   end
 
   def correct_guess?(guess)
@@ -95,63 +95,63 @@ class MastermindIO
 
     # loop till guesses == max
     while @guesses < MAX_GUESSES
-        guess = get_guess
-        @guesses += 1
-        if @guesses == MAX_GUESSES
-          puts "Sorry! You're out of guesses."
-          puts "You lose!"
-          break
-        end
+      guess = get_guess
+      @guesses += 1
+      if @guesses == MAX_GUESSES
+        puts "Sorry! You're out of guesses."
+        puts 'You lose!'
+        break
+      end
 
-        # guess is correct? congratulate
-        if @game_logic.correct_guess?(guess)
-            puts 'Congratulations! Your guess was correct!'
-            puts 'You win!'
-            puts ''
-            break
-        else
-        # not, feedback
-            puts 'Sorry, not quite right. Here are a few pointers.'
-            puts ''
-            puts 'The # means your guess was correct and in the right position.'
-            puts 'The 0 means the colour was correct but in the wrong position.'
-            puts 'This feedback does not represent the order of your guess.'
-            puts ''
-
-            @game_logic.give_feedback(guess)
-
-            puts ''
-            puts "Guesses remaining #{MAX_GUESSES - @guesses}"
-        end
-     end
-        code_in_colour = string_background(convert_to_colour_string(@game_logic.tell_secret))
-        puts "This was the secret code: #{int_background(@game_logic.tell_secret)}."
-        puts "This was the secret code: #{code_in_colour}."
+      # guess is correct? congratulate
+      if @game_logic.correct_guess?(guess)
+        puts 'Congratulations! Your guess was correct!'
+        puts 'You win!'
         puts ''
-        puts 'Thank you for playing!'
+        break
+      else
+        # not, feedback
+        puts 'Sorry, not quite right. Here are a few pointers.'
+        puts ''
+        puts 'The # means your guess was correct and in the right position.'
+        puts 'The 0 means the colour was correct but in the wrong position.'
+        puts 'This feedback does not represent the order of your guess.'
+        puts ''
+
+        @game_logic.give_feedback(guess)
+
+        puts ''
+        puts "Guesses remaining #{MAX_GUESSES - @guesses}"
+      end
+    end
+    code_in_colour = string_background(convert_to_colour_string(@game_logic.tell_secret))
+    puts "This was the secret code: #{int_background(@game_logic.tell_secret)}."
+    puts "This was the secret code: #{code_in_colour}."
+    puts ''
+    puts 'Thank you for playing!'
   end
 
   def get_guess
     valid = false
     while valid == false
-        puts 'Try to break the code. Type your guess below (as a number):'
-        guess = gets.chomp
+      puts 'Try to break the code. Type your guess below (as a number):'
+      guess = gets.chomp
 
-        # Splits to four digit array, but still as string. Map iterates and converts.
-        guess = guess.chars.map(&:to_i)
+      # Splits to four digit array, but still as string. Map iterates and converts.
+      guess = guess.chars.map(&:to_i)
 
-        # Check input is valid (four digits, lower than 7)
-        if guess.length == 4 && guess.all? {|digit| digit.between?(1, 6)}
-            valid = true
-        else 
-            puts 'Try again using only four digits lower than 7.'
-        end
+      # Check input is valid (four digits, lower than 7)
+      if guess.length == 4 && guess.all? {|digit| digit.between?(1, 6)}
+        valid = true
+      else
+        puts 'Try again using only four digits lower than 7.'
+      end
     end
     string_colour_guess = convert_to_colour_string(guess)
     puts "This is the guess, colorized: #{int_background(guess)}"
     puts "And in English: #{string_background(string_colour_guess)}"
     guess
-end
+  end
 
   # Colours the background of each number
   def int_background(array)
@@ -160,7 +160,7 @@ end
       new_guess[index] = x.to_s.colorize(:background => COLORS[x])
     end
     new_guess.join
-    end
+  end
 
   # This converts strings into the appropriate coloured background
   def string_background(array)
@@ -176,12 +176,12 @@ end
     x = 0
     new_guess = Array.new(4)
     # Converts numbers to corresponding colour
-    while x < CODE_LENGTH do
+    while x < CODE_LENGTH
       new_guess[x] = COLORS_STRING[array[x] - 1]
       x += 1
     end
     new_guess
-    end
+  end
 end
 
 game_one = MastermindIO.new
