@@ -98,7 +98,9 @@ class MastermindIO
         guess = get_guess
         @guesses += 1
         if @guesses == MAX_GUESSES
-            break
+          puts "Sorry! You're out of guesses."
+          puts "You lose!"
+          break
         end
 
         # guess is correct? congratulate
@@ -116,9 +118,10 @@ class MastermindIO
             puts 'This feedback does not represent the order of your guess.'
             puts ''
 
-            puts "Guesses remaining #{MAX_GUESSES - @guesses}"
-
             @game_logic.give_feedback(guess)
+
+            puts ''
+            puts "Guesses remaining #{MAX_GUESSES - @guesses}"
         end
      end
         code_in_colour = string_background(convert_to_colour_string(@game_logic.tell_secret))
